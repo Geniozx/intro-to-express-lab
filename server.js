@@ -35,7 +35,7 @@ app.get('/greetings/:username', (req, res) => {
 
 app.get('/roll/:itemNumber', (req, res) => {
     const max = parseInt(req.params.itemNumber);
-    if (isNaN(max) || max < 0) {
+    if (isNaN(max) || max < + 1) {
         return res.send('You must specify a number.');
     }
     const roll = Math.floor(Math.random() * max) + 1;
@@ -49,6 +49,75 @@ app.get('/roll/:itemNumber', (req, res) => {
 
 // Data Array:
 
+  const collectibles = [
+    { name: 'shiny ball', price: 5.95 },
+    { name: 'autographed picture of a dog', price: 10 },
+    { name: 'vintage 1970s yogurt SOLD AS-IS', price: 0.99 }
+  ];
+
+//   Validation: If the index does not correspond to an item in the array, respond with “This item is not yet in stock. Check back soon!”
+
+// Response: Should describe the item at the given index, like “So, you want the shiny ball? For 5.95, it can be yours!” Include both the name and price properties.
+
+app.get('collectibles/:indexParameters', (req,res) => {
+        const index = parseInt(req.params.indexParameters);
+        const item = collectibles[index];
+    if (!item) {
+        return res.send('This item is not yet in stock. Check back soon!');
+    }
+    res.send(`So you want the ${item.name}? For ${item.price}, it can be yours!`)
+})
+
+// Using Query Parameters
+// In this section, you practice using query parameters to pass information from the URL to the server in an Express application.
+
+// Query parameters are added to the end of a URL after a ? and are formatted as key=value pairs. Multiple query parameters can 
+// be added to a URL by separating them with &. For example, the following URL has two query parameters, name and age:
+
+// localhost:3000/hello?name=Christy&age=32
+
+// Query parameters are available in the server’s req.query object. We can access the values of the name and age query parameters like so:
+app.get('/hello', (req, res) => {
+    res.send(`Hello there, ${req.query.name}! I hear you are ${req.query.age} years old!`);
+});
+
+// 4. Filter Shoes by Query Parameters
+// Use the following array of shoes in this challenge:
+
+  const shoes = [
+      { name: "Birkenstocks", price: 50, type: "sandal" },
+      { name: "Air Jordans", price: 500, type: "sneaker" },
+      { name: "Air Mahomeses", price: 501, type: "sneaker" },
+      { name: "Utility Boots", price: 20, type: "boot" },
+      { name: "Velcro Sandals", price: 15, type: "sandal" },
+      { name: "Jet Boots", price: 1000, type: "boot" },
+      { name: "Fifty-Inch Heels", price: 175, type: "heel" }
+  ];
+
+
+//   Task: Create a route /shoes that filters the list of shoes based on query parameters.
+
+// Query Parameters:
+
+// min-price: Excludes shoes below this price.
+// max-price: Excludes shoes above this price.
+// type: Shows only shoes of the specified type.
+// No parameters: Responds with the full list of shoes.
+
+app.get('/shoes', (req, res) => {          //Route get/shoes
+    const minPrice = parseFloat(req.query['min-price']); //read query parameters
+    const maxPrice = parseFloat(req.query['max-price']);
+    const type = req.query.type;
+    let filteredShoes = shoes;             //start with full shoes array
+    if (!isNaN(minPrice)) {                //filter by min-price
+        filteredShoes = filteredShoes.filter(shoe => shoe.price >= minPrice);
+    } if (!isNaN(maxPrice)) {              //filter max-price
+        filteredShoes - filteredShoes.filter(shoe => shoe.price <= maxPrice);
+    } if (type) {                         //filter type
+    filteredShoes = filteredShoes.filter(shoe => shoe.type === type.toLowerCase());
+ }
+    res.json(filteredShoes);
+});
 
 
 
